@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School or housing? How residents chose between the two proposals</title>
+<style>
+:root{
+  --jm-font: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --surface:#ffffff; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --hair:rgba(11,11,11,.12);
+  --r1:#c23434; --r2:#ea8a89; --n3:#e4e2da; --b4:#6da7ec; --b5:#1c5cab;
+  --on-r1:#fff; --on-r2:#0b0b0b; --on-n3:#0b0b0b; --on-b4:#0b0b0b; --on-b5:#fff;
+  --int-no:#c23434; --int-yes:#86b6ef; --int-very:#1c5cab;
+  --on-int-no:#fff; --on-int-yes:#0b0b0b; --on-int-very:#fff;
+  --cat-housing:#2a78d6; --cat-school:#eb6834; --cat-equal:#898781;
+}
+/* Dark is opt-in only (data-theme="dark" on <html> or the figure): allstonia.com
+   renders on white, so an automatic OS-dark flip would break the host page. */
+[data-theme="dark"]{
+  --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,.14);
+  --r1:#f07c7b; --r2:#b83636; --n3:#383835; --b4:#2a5f9e; --b5:#4e9bf0;
+  --on-r1:#0b0b0b; --on-r2:#fff; --on-n3:#fff; --on-b4:#fff; --on-b5:#0b0b0b;
+  --int-no:#e34948; --int-yes:#2a5f9e; --int-very:#6da7ec;
+  --on-int-no:#0b0b0b; --on-int-yes:#fff; --on-int-very:#0b0b0b;
+  --cat-housing:#3987e5; --cat-school:#d95926; --cat-equal:#9a988f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--surface)}
+.jm{font-family:var(--jm-font);color:var(--ink);background:var(--surface);
+    font-size:14px;line-height:1.45;padding:18px 16px 14px;max-width:860px;margin:0 auto;
+    -webkit-font-smoothing:antialiased;container-type:inline-size;container-name:jm}
+.jm h2{font-size:19px;line-height:1.25;margin:0 0 4px;font-weight:700;letter-spacing:-.01em}
+.jm .sub{margin:0 0 2px;color:var(--ink2);font-size:13px}
+.jm .note{margin:6px 0 0;color:var(--muted);font-size:12px}
+.jm .src{margin:14px 0 0;color:var(--muted);font-size:11.5px;border-top:1px solid var(--hair);padding-top:8px}
+
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 4px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px;color:var(--ink2);font-size:12px;white-space:nowrap}
+.legend i{width:11px;height:11px;border-radius:2px;display:inline-block;flex:0 0 auto}
+
+.rows{margin:12px 0 0}
+.row{display:grid;grid-template-columns:var(--labw,210px) 1fr var(--valw,0px);
+     gap:0 14px;align-items:center;padding:7px 0}
+.rowlab{font-size:12.5px;color:var(--ink2);line-height:1.3}
+.rowlab b{display:block;color:var(--ink);font-weight:700;font-size:13px}
+.rowval{font-size:12.5px;font-weight:700;color:var(--ink);text-align:right;
+        font-variant-numeric:tabular-nums;white-space:nowrap}
+.track{position:relative;height:40px}
+.track::before{content:"";position:absolute;left:var(--zero);top:-8px;bottom:-8px;
+               width:1px;background:var(--axis)}
+.bar{position:absolute;top:5px;bottom:5px;display:flex}
+.seg{position:relative;display:flex;align-items:center;justify-content:center;
+     box-shadow:0 0 0 1.5px var(--surface);font-size:11.5px;font-weight:700;
+     font-variant-numeric:tabular-nums;cursor:default;transition:filter .12s}
+.seg:hover,.seg:focus-visible{filter:brightness(1.07);outline:none}
+.seg:focus-visible{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+.seg span{opacity:0;transition:opacity .1s;pointer-events:none}
+.seg.lab span{opacity:1}
+
+.axis{position:relative;height:17px;margin-top:3px;grid-column:2}
+.axis b{position:absolute;transform:translateX(-50%);font-size:11px;color:var(--muted);
+        font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+.axisrow{display:grid;grid-template-columns:var(--labw,210px) 1fr var(--valw,0px);gap:0 14px}
+
+.cols{display:flex;align-items:flex-end;gap:2.5%;height:168px;margin:16px 0 0}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.colv{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.colb{width:100%;border-radius:3px 3px 0 0;cursor:default;transition:filter .12s;min-height:2px}
+.colb:hover,.colb:focus-visible{filter:brightness(1.07);outline:none}
+.colb:focus-visible{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+.colx{display:flex;gap:2.5%;margin-top:6px;border-top:1px solid var(--axis);padding-top:6px}
+.colx div{flex:1;text-align:center;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.colcap{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;font-weight:700}
+
+.under{display:flex;margin:5px 0 0}
+.under div{display:flex;flex-direction:column;align-items:center;min-width:0;padding:0 2px}
+.under b{font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.under span{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hero{display:flex;flex-wrap:wrap;gap:26px;align-items:baseline;margin:16px 0 2px;
+      padding-bottom:14px;border-bottom:1px solid var(--hair)}
+.hero div{display:flex;flex-direction:column;gap:1px}
+.hero .big{font-size:40px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.hero .cap{font-size:12px;color:var(--ink2)}
+
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 0}
+.ctl label{font-size:12px;color:var(--muted)}
+.btn{font:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--hair);
+     border-radius:999px;background:var(--surface);color:var(--ink2);cursor:pointer}
+.btn:hover{border-color:var(--axis);color:var(--ink)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+table{border-collapse:collapse;width:100%;margin:14px 0 0;font-size:12px}
+caption{text-align:left;font-size:12px;color:var(--muted);padding-bottom:6px}
+th,td{text-align:right;padding:5px 8px;border-bottom:1px solid var(--hair);
+      font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left;font-variant-numeric:normal}
+thead th{color:var(--ink2);font-weight:700;border-bottom:1px solid var(--axis)}
+
+.tip{position:fixed;z-index:99;pointer-events:none;opacity:0;transition:opacity .1s;
+     background:var(--ink);color:var(--surface);padding:7px 10px;border-radius:6px;
+     font-size:12px;line-height:1.4;max-width:260px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:12.5px;margin-bottom:2px}
+/* Narrow layouts. Written once as a mixin and applied through a container
+   query where supported (so an inline paste reacts to its column, not the
+   window) with a viewport media query as the fallback. */
+@container jm (max-width:620px){
+  .row,.axisrow{grid-template-columns:1fr;gap:4px}
+  .rowval{text-align:left}
+  .axis{grid-column:1}
+  .track::before{top:-4px;bottom:-4px}
+  .jm h2{font-size:17px}
+  .hero{gap:18px}.hero .big{font-size:30px}
+  .cols{height:140px}
+}
+@container jm (max-width:430px){
+  .axis b.minor{display:none}
+  .legend{gap:3px 10px}.legend span{font-size:11.5px}
+  .colv{font-size:11px}.colx div{font-size:11px}
+  .seg{font-size:11px}
+  .hero .big{font-size:26px}
+  .jm{padding:14px 12px 12px}
+  th,td{padding:4px 5px;font-size:11px}
+}
+@supports not (container-type:inline-size){
+  @media (max-width:620px){
+    .row,.axisrow{grid-template-columns:1fr;gap:4px}
+    .rowval{text-align:left}
+    .axis{grid-column:1}
+    .track::before{top:-4px;bottom:-4px}
+    .jm h2{font-size:17px}
+    .hero{gap:18px}.hero .big{font-size:30px}
+    .cols{height:140px}
+  }
+  @media (max-width:430px){
+    .axis b.minor{display:none}
+    .legend{gap:3px 10px}.legend span{font-size:11.5px}
+    .colv{font-size:11px}.colx div{font-size:11px}
+    .seg{font-size:11px}
+    .hero .big{font-size:26px}
+    .jm{padding:14px 12px 12px}
+    th,td{padding:4px 5px;font-size:11px}
+  }
+}
+</style>
+</head>
+<body data-embed-id="school-vs-housing">
+<div class="jm">
+<h2>School or housing? How residents chose between the two proposals</h2>
+<p class="sub">September 2026 survey · 473 responses · comparing each respondent's own two ratings</p>
+<div class="legend">
+  <span><i style="background:var(--cat-housing)"></i>Proposal A — housing, no school</span>
+  <span><i style="background:var(--cat-equal)"></i>Rated them equally</span>
+  <span><i style="background:var(--cat-school)"></i>Proposal B — hold land for a school</span>
+</div>
+<div class="rows" style="--labw:0px;--valw:0px">
+  <div class="row"><div></div><div class="track" style="height:42px">
+    <div class="bar" style="left:0;width:100%"><div class="seg" tabindex="0" role="img" style="flex:0 0 64.0592%;background:var(--cat-housing)" data-tip="<b>Rated the housing proposal higher</b>303 of 473 respondents (64.1%)" aria-label="Rated the housing proposal higher: 303 respondents, 64.1 percent"></div><div class="seg" tabindex="0" role="img" style="flex:0 0 13.3192%;background:var(--cat-equal)" data-tip="<b>Rated the two equally</b>63 of 473 respondents (13.3%)" aria-label="Rated the two equally: 63 respondents, 13.3 percent"></div><div class="seg" tabindex="0" role="img" style="flex:0 0 22.6216%;background:var(--cat-school)" data-tip="<b>Rated the school proposal higher</b>107 of 473 respondents (22.6%)" aria-label="Rated the school proposal higher: 107 respondents, 22.6 percent"></div></div></div><div></div></div>
+</div>
+<div class="under"><div style="flex:0 0 64.0592%"><b>64%</b><span>303</span></div><div style="flex:0 0 13.3192%"><b>13%</b><span>63</span></div><div style="flex:0 0 22.6216%"><b>23%</b><span>107</span></div></div>
+<p class="note">Almost two in three respondents — 64.1% — gave the housing-only proposal a
+higher score than the one that holds land for a school. 22.6% did the reverse.</p>
+<h2 style="font-size:16px;margin-top:26px">How far apart did they place them?</h2>
+<p class="sub">Each respondent's rating of Proposal A minus their rating of Proposal B</p>
+<div class="cols" style="height:150px"><div class="col"><div class="colv">4%</div><div class="colb" tabindex="0" role="img" style="height:21.59%;background:var(--cat-school)" data-tip="<b>School proposal higher by 4</b>19 of 473 respondents (4%)" aria-label="Gap -4: 19 respondents"></div></div><div class="col"><div class="colv">3%</div><div class="colb" tabindex="0" role="img" style="height:14.77%;background:var(--cat-school)" data-tip="<b>School proposal higher by 3</b>13 of 473 respondents (2.7%)" aria-label="Gap -3: 13 respondents"></div></div><div class="col"><div class="colv">8%</div><div class="colb" tabindex="0" role="img" style="height:40.91%;background:var(--cat-school)" data-tip="<b>School proposal higher by 2</b>36 of 473 respondents (7.6%)" aria-label="Gap -2: 36 respondents"></div></div><div class="col"><div class="colv">8%</div><div class="colb" tabindex="0" role="img" style="height:44.32%;background:var(--cat-school)" data-tip="<b>School proposal higher by 1</b>39 of 473 respondents (8.2%)" aria-label="Gap -1: 39 respondents"></div></div><div class="col"><div class="colv">13%</div><div class="colb" tabindex="0" role="img" style="height:71.59%;background:var(--cat-equal)" data-tip="<b>Rated the two equally</b>63 of 473 respondents (13.3%)" aria-label="Gap 0: 63 respondents"></div></div><div class="col"><div class="colv">11%</div><div class="colb" tabindex="0" role="img" style="height:60.23%;background:var(--cat-housing)" data-tip="<b>Housing proposal higher by 1</b>53 of 473 respondents (11.2%)" aria-label="Gap 1: 53 respondents"></div></div><div class="col"><div class="colv">19%</div><div class="colb" tabindex="0" role="img" style="height:100.00%;background:var(--cat-housing)" data-tip="<b>Housing proposal higher by 2</b>88 of 473 respondents (18.6%)" aria-label="Gap 2: 88 respondents"></div></div><div class="col"><div class="colv">16%</div><div class="colb" tabindex="0" role="img" style="height:84.09%;background:var(--cat-housing)" data-tip="<b>Housing proposal higher by 3</b>74 of 473 respondents (15.6%)" aria-label="Gap 3: 74 respondents"></div></div><div class="col"><div class="colv">19%</div><div class="colb" tabindex="0" role="img" style="height:100.00%;background:var(--cat-housing)" data-tip="<b>Housing proposal higher by 4</b>88 of 473 respondents (18.6%)" aria-label="Gap 4: 88 respondents"></div></div></div>
+<div class="colx"><div>−4</div><div>−3</div><div>−2</div><div>−1</div><div>0</div><div>1</div><div>2</div><div>3</div><div>4</div></div>
+<div class="colcap"><span style="color:var(--cat-school)">◀ favours the school proposal</span><span style="color:var(--cat-housing)">favours housing ▶</span></div>
+<p class="note">A gap of 4 is the widest possible — a 5 for one proposal and a 1 for the other.
+34.2% of respondents separated them by 3 or 4 points in favour of housing,
+against 6.8% that far apart in favour of the school.</p>
+<div class="ctl"><button class="btn" data-toggle-table aria-pressed="false">Show the numbers</button></div>
+<table hidden><caption>Within-respondent comparison of Proposal A and Proposal B, September 2026 (n = 473)</caption><thead><tr><th></th><th>Respondents</th><th>Share</th></tr></thead><tbody><tr><td>Rated the housing proposal higher</td><td>303</td><td>64.1%</td></tr><tr><td>Rated the two equally</td><td>63</td><td>13.3%</td></tr><tr><td>Rated the school proposal higher</td><td>107</td><td>22.6%</td></tr><tr><td>Gap of -4 (A − B)</td><td>19</td><td>4%</td></tr><tr><td>Gap of -3 (A − B)</td><td>13</td><td>2.7%</td></tr><tr><td>Gap of -2 (A − B)</td><td>36</td><td>7.6%</td></tr><tr><td>Gap of -1 (A − B)</td><td>39</td><td>8.2%</td></tr><tr><td>Rated equally</td><td>63</td><td>13.3%</td></tr><tr><td>Gap of +1 (A − B)</td><td>53</td><td>11.2%</td></tr><tr><td>Gap of +2 (A − B)</td><td>88</td><td>18.6%</td></tr><tr><td>Gap of +3 (A − B)</td><td>74</td><td>15.6%</td></tr><tr><td>Gap of +4 (A − B)</td><td>88</td><td>18.6%</td></tr></tbody></table>
+<p class="src">Source: City of Boston Jackson Mann site survey, September 2026. Proposal A: new Community Center with a pool, no school, maximise housing.
+Proposal B: hold part of the site for a possible future school, Community Center with a pool, less housing.</p>
+</div>
+<div class="tip" role="tooltip"></div>
+<script>
+(function(){
+  var tip=document.querySelector('.tip');
+  function show(e,html){tip.innerHTML=html;tip.classList.add('on');move(e)}
+  function move(e){
+    var x=(e.clientX!==undefined?e.clientX:0), y=(e.clientY!==undefined?e.clientY:0);
+    if(e.type==='focus'){var r=e.target.getBoundingClientRect();x=r.left+r.width/2;y=r.top}
+    var w=tip.offsetWidth,h=tip.offsetHeight;
+    var l=Math.min(Math.max(8,x-w/2),window.innerWidth-w-8);
+    var t=y-h-12; if(t<6) t=y+18;
+    tip.style.left=l+'px'; tip.style.top=t+'px';
+  }
+  function hide(){tip.classList.remove('on')}
+  document.addEventListener('pointerover',function(e){
+    var el=e.target.closest('[data-tip]'); if(el) show(e,el.getAttribute('data-tip'));
+  });
+  document.addEventListener('pointermove',function(e){
+    if(tip.classList.contains('on')&&e.target.closest('[data-tip]')) move(e);
+  });
+  document.addEventListener('pointerout',function(e){
+    if(e.target.closest('[data-tip]')) hide();
+  });
+  document.addEventListener('focusin',function(e){
+    var el=e.target.closest('[data-tip]'); if(el) show(e,el.getAttribute('data-tip'));
+  });
+  document.addEventListener('focusout',hide);
+  window.addEventListener('scroll',hide,true);
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('[data-tip]')) hide();
+  });
+  window.addEventListener('blur',hide);
+
+  // show a segment's label only when the segment is wide enough to hold it
+  function fit(){
+    document.querySelectorAll('.seg').forEach(function(s){
+      s.classList.toggle('lab', s.offsetWidth >= 34);
+    });
+  }
+  window.addEventListener('resize',fit); fit();
+  if(window.ResizeObserver) new ResizeObserver(fit).observe(document.body);
+
+  // data-table toggle
+  var tb=document.querySelector('[data-toggle-table]');
+  if(tb) tb.addEventListener('click',function(){
+    var t=document.querySelector('table'), open=t.hasAttribute('hidden');
+    if(open){t.removeAttribute('hidden')} else {t.setAttribute('hidden','')}
+    tb.setAttribute('aria-pressed',open?'true':'false');
+    tb.textContent=open?'Hide the numbers':'Show the numbers';
+    queue();
+  });
+
+  // Report our height so the host page can size the iframe to fit exactly.
+  var last=0, pending=0;
+  function measure(){
+    var jm=document.querySelector('.jm');
+    var r=jm.getBoundingClientRect();
+    var cs=getComputedStyle(jm);
+    return Math.ceil(r.height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+  }
+  function sendHeight(force){
+    var h=measure();
+    if(!force && Math.abs(h-last)<2) return;
+    last=h;
+    try{parent.postMessage({jacksonMannEmbed:document.body.dataset.embedId,height:h},'*')}catch(e){}
+  }
+  function queue(){ cancelAnimationFrame(pending); pending=requestAnimationFrame(function(){sendHeight()}); }
+  window.addEventListener('load',function(){sendHeight(true)});
+  window.addEventListener('resize',queue);
+  document.addEventListener('DOMContentLoaded',function(){sendHeight(true)});
+  if(window.ResizeObserver) new ResizeObserver(queue).observe(document.querySelector('.jm'));
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){sendHeight(true)});
+  // the host can ask us to re-report (e.g. after it lazily reveals the embed)
+  window.addEventListener('message',function(e){
+    if(e.data&&e.data.jacksonMannPing) sendHeight(true);
+  });
+  sendHeight(true);
+  window.jmSendHeight=queue;
+})();
+</script>
+</body>
+</html>
